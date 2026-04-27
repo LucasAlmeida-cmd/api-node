@@ -4,9 +4,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 
-const criar = async (dadosUsuario) => {
-    const novoUsuario = await Usuario.create(dadosUsuario);
-    return novoUsuario;
+const criarComum = async (dados) => {
+    return await Usuario.create({
+        ...dados,
+        tipo: 'COMUM',
+        codigo: null 
+    });
 };
 
 const listarTodos = async (pagina = 1, limite = 10) => {
@@ -16,7 +19,7 @@ const listarTodos = async (pagina = 1, limite = 10) => {
     const resultado = await Usuario.findAndCountAll({
         limit: limit,
         offset: offset,
-        attributes: { exclude: ['senha'] } 
+        attributes: { exclude: ['senha', 'codigo'] } 
     });
     const totalPages = Math.ceil(resultado.count / limit);
     return {
@@ -39,7 +42,7 @@ const buscarPorId = async (id) => {
 };
 
 const buscarPorEmail = async (email) => {
-    const usuario = await Usuario.findOne({ where: { email } });
+    const usuario = await Usuario.findOne({ where: { email } , attributes: { exclude: ['senha', 'codigo']}});
     if (!usuario) {
         throw new AppError('Usuário não encontrado', 404);
     }
@@ -77,7 +80,7 @@ const login = async (email, senhaDigitada) => {
 };
 
 module.exports = {
-    criar,
+    criarComum,
     listarTodos,
     buscarPorId,
     buscarPorEmail,

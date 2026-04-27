@@ -2,7 +2,7 @@ const usuarioService = require('../services/usuarioService');
 
 const criarUsuario = async (req, res) => {
     try {
-        const novoUsuario = await usuarioService.criar(req.body);
+        const novoUsuario = await usuarioService.criarComum(req.body);
         res.status(201).json(novoUsuario);
     } catch (erro) {
         res.status(400).json({ mensagem: 'Erro ao criar usuário', detalhes: erro.message });

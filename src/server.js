@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const sequelize = require('./config/database');
 const manipuladorErros = require('./middlewares/manipuladorErros');
 const swaggerUi = require('swagger-ui-express'); 
@@ -15,11 +16,11 @@ app.use(cors());
 app.use(express.json()); 
 
 app.use('/api', usuarioRoutes); 
+app.use('/api', adminRoutes); 
 app.use(manipuladorErros);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); 
 
-app.use('/api', usuarioRoutes);
 
 
 app.get('/', (req, res) => {

@@ -13,11 +13,33 @@ const criarAdmin = async (dados) => {
     return admin;
 };
 
-const listarRelatoriosAvancados = async () => {
-    return await Usuario.findAll({ where: { tipo: 'ADMIN' } });
+const listarTodos = async (pagina = 1, limite = 10) => {
+    const limit = parseInt(limite, 10);
+    const page = parseInt(pagina, 10);
+    const offset = (page - 1) * limit;
+    const resultado = await Usuario.findAndCountAll({
+        limit: limit,
+        offset: offset
+    });
+    const totalPages = Math.ceil(resultado.count / limit);
+    return {
+        metadados: {
+            totalRegistros: resultado.count,
+            totalPaginas: totalPages,
+            paginaAtual: page,
+            itensPorPagina: limit
+        },
+        dados: resultado.rows
+    };
+};
+
+const deletar = async (email) => {
+    const usuario = await buscarPorEmail(email);
+    await usuario.destroy();
 };
 
 module.exports = {
     criarAdmin,
-    listarRelatoriosAvancados
+    listarTodos,
+    deletar
 };

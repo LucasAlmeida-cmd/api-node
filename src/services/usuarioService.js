@@ -12,26 +12,7 @@ const criarComum = async (dados) => {
     });
 };
 
-const listarTodos = async (pagina = 1, limite = 10) => {
-    const limit = parseInt(limite, 10);
-    const page = parseInt(pagina, 10);
-    const offset = (page - 1) * limit;
-    const resultado = await Usuario.findAndCountAll({
-        limit: limit,
-        offset: offset,
-        attributes: { exclude: ['senha', 'codigo'] } 
-    });
-    const totalPages = Math.ceil(resultado.count / limit);
-    return {
-        metadados: {
-            totalRegistros: resultado.count,
-            totalPaginas: totalPages,
-            paginaAtual: page,
-            itensPorPagina: limit
-        },
-        dados: resultado.rows
-    };
-};
+
 
 const buscarPorId = async (id) => {
     const usuario = await Usuario.findByPk(id);
@@ -71,7 +52,11 @@ const login = async (email, senhaDigitada) => {
     }
 
     const token = jwt.sign(
-        { id: usuario.id, email: usuario.email }, 
+        { 
+        id: usuario.id, 
+        email: usuario.email, 
+        tipo: usuario.tipo
+    },
         process.env.CHAVE_SECRETA, 
         { expiresIn: '1h' } 
     );
@@ -81,7 +66,6 @@ const login = async (email, senhaDigitada) => {
 
 module.exports = {
     criarComum,
-    listarTodos,
     buscarPorId,
     buscarPorEmail,
     atualizar,
